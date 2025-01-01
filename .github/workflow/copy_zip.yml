@@ -1,0 +1,35 @@
+name: Copy and Zip Directory
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:  # Allows manual triggering
+
+jobs:
+  copy-and-zip:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        
+      - name: Create target directory
+        run: mkdir -p target_directory
+        
+      - name: Copy files
+        run: |
+          cp -r source_directory/* target_directory/
+        
+      - name: Zip directory
+        run: |
+          cd target_directory
+          zip -r ../output.zip .
+        
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: zipped-directory
+          path: output.zip
+          retention-days: 5
